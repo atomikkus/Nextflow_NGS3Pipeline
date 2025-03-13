@@ -118,6 +118,46 @@ process SE8_germ{
     SE8_germ.py "${sample_file}"
     """
 }
+process CDS{
+    input:
+        path sample_file
+    output:
+        stdout
+    scrip:
+    """
+    CDS.py "${sample_file}"
+    """
+}
+process RNA_CT{
+    input:
+        path sample_file
+    output:
+        stdout
+    scrip:
+    """
+    RNA_CT.py "${sample_file}"
+    """
+}
+process RNA_SE8{
+    input:
+        path sample_file
+    output:
+        stdout
+    scrip:
+    """
+    RNA_ST8.py "${sample_file}"
+    """
+}
+process Indiegene_CEFu {
+    input:
+        path sample_file
+    output:
+        stdout
+    scrip:
+    """
+    Indiegene_CEFu.py "${sample_file}"
+    """
+}
 workflow {
     Renaming()
     if (params.project == "new") {
@@ -134,4 +174,8 @@ workflow {
     Indiegene_CE_germ(preprocessing_for_launch.out)
     SE8_som(preprocessing_for_launch.out)
     SE8_germ(preprocessing_for_launch.out)
+    CDS(preprocessing_for_launch.out)
+    RNA_CT(preprocessing_for_launch.out)
+    RNA_SE8(preprocessing_for_launch.out)
+    Indiegene_CEFu(preprocessing_for_launch.out)
 }
