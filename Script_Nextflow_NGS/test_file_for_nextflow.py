@@ -14,17 +14,23 @@ files = [f for f in os.listdir(current_directory) if f.endswith('.fastq.gz')]
 
 df = pd.DataFrame(columns=columns)
 df["file_name"] = [i.split("_")[0] if "-" in i else re.split(r"_R[12]", i)[0] for i in files]
-df.loc[df["file_name"].str.contains("-GE-", na=False), "Capturing_Kit"] = "GE"
-df.loc[df["file_name"].str.contains("-FEV2F2both-", na=False), "Capturing_Kit"] = "FEV2F2both"
-df.loc[df["file_name"].str.contains("-SE8-", na=False), "Capturing_Kit"] = "SE8"
-df.loc[df["file_name"].str.contains("-CE-", na=False), "Capturing_Kit"] = "CE"
-df.loc[~df["file_name"].str.contains("-CT-|-ST8-", na=False), "Sample_Type"] = "DNA"
+df.loc[df["file_name"].str.contains(r"(?i)([_-]|^)GE([_-]|$)", na=False), "Capturing_Kit"] = "GE"
+df.loc[df["file_name"].str.contains(r"(?i)([_-]|^)FEV2F2both([_-]|$)", na=False), "Capturing_Kit"] = "FEV2F2both"
+df.loc[df["file_name"].str.contains(r"(?i)([_-]|^)SE8([_-]|$)", na=False), "Capturing_Kit"] = "SE8"
+df.loc[df["file_name"].str.contains(r"(?i)([_-]|^)CE([_-]|$)", na=False), "Capturing_Kit"] = "CE"
+df.loc[df["file_name"].str.contains(r"(?i)([_-]|^)CEFu([_-]|$)", na=False), "Capturing_Kit"] = "CEFu"
+df.loc[df["file_name"].str.contains(r"(?i)([_-]|^)CDS([_-]|$)", na=False), "Capturing_Kit"] = "CDS"
+df.loc[df["file_name"].str.contains(r"(?i)([_-]|^)CT([_-]|$)", na=False), "Capturing_Kit"] = "CT"
+df.loc[df["file_name"].str.contains(r"(?i)([_-]|^)ST8([_-]|$)", na=False), "Capturing_Kit"] = "ST8"
+df.loc[~df["file_name"].str.contains(r"(?i)[_-]CT[_-]|[_-]ST8[_-]", na=False), "Sample_Type"] = "DNA"
+df.loc[df["file_name"].str.contains(r"(?i)[_-]CT[_-]|[_-]ST8[_-]", na=False), "Sample_Type"] = "RNA"
 
 # Fill Test_Name
 df.loc[df["Capturing_Kit"] == "GE", "Test_Name"] = "INDIEGENE"
 df.loc[df["Capturing_Kit"] == "FEV2F2both", "Test_Name"] = "TARGET_FIRST"
-df.loc[df["Capturing_Kit"].isin(["CE"]), "Test_Name"] = "INDIEGENE"
-df.loc[df["Capturing_Kit"].isin(["SE8"]), "Test_Name"] = "ABSOLUTE"
+df.loc[df["Capturing_Kit"] == "CDS", "Test_Name"] = "TARGET_FIRST"
+df.loc[df["Capturing_Kit"].isin(["CE","CEFu","CT"]), "Test_Name"] = "INDIEGENE"
+df.loc[df["Capturing_Kit"].isin(["SE8","ST8"]), "Test_Name"] = "ABSOLUTE"
 df.drop_duplicates(subset=["file_name"], keep="first", inplace=True)
 output_file_path = os.path.join(current_directory, "test_ngs3_nextflow_Copy_try.csv")
 df.to_csv(output_file_path,index=False)
