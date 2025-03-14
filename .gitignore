@@ -6,3 +6,4 @@
 Test_again
 history
 .nextflow.log*
+*.gz*
